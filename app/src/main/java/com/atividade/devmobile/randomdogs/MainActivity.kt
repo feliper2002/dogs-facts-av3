@@ -2,6 +2,9 @@ package com.atividade.devmobile.randomdogs
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -94,6 +97,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun navToList() {
         startActivity(Intent(this, FactListActivity::class.java))
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        var menuInflater = MenuInflater(this)
+        menuInflater.inflate(R.menu.menu_item, menu)
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.factListMenu -> {
+                navToList()
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 }
 

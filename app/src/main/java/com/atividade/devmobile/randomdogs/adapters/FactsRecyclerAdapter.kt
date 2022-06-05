@@ -13,6 +13,8 @@ class FactsRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var list = ArrayList<FactModel>()
 
+    private var onClickDeleteItem: ((FactModel)->Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return FactViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.fact_card, parent, false))
     }
@@ -21,6 +23,7 @@ class FactsRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         when(holder) {
             is FactViewHolder -> {
                 holder.bind(list[position])
+                holder.deleteBtn.setOnClickListener { onClickDeleteItem?.invoke(list[position]) }
             }
         }
     }
@@ -29,8 +32,18 @@ class FactsRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return list.size
     }
 
+    fun setOnClickDeleteTodo(callback: (FactModel)->Unit) {
+        this.onClickDeleteItem = callback
+    }
+
+    fun setDataset(facts: ArrayList<FactModel>) {
+        list = facts
+        notifyDataSetChanged()
+    }
+
     class FactViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val message: TextView = itemView.factMessage
+        var deleteBtn = itemView.deleteBtn
 
         fun bind(fact: FactModel) {
             message.text = fact.message

@@ -7,4 +7,13 @@
     android:background="@color/white"
     tools:context=".FactListActivity">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/reclyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
