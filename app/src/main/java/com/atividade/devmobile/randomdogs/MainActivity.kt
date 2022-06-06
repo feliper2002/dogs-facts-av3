@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import com.atividade.devmobile.randomdogs.data.SQLiteHelper
 import com.atividade.devmobile.randomdogs.databinding.ActivityMainBinding
 import com.atividade.devmobile.randomdogs.models.FactModel
@@ -37,6 +38,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
         initView()
         initStorage()
 
@@ -47,9 +50,6 @@ class MainActivity : AppCompatActivity() {
         botaoSalvar.setOnClickListener {
             saveFact()
         }
-
-
-
     }
 
     private fun getRandom() {
