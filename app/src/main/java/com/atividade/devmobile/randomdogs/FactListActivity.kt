@@ -9,6 +9,7 @@ import com.atividade.devmobile.randomdogs.adapters.FactsRecyclerAdapter
 import com.atividade.devmobile.randomdogs.data.SQLiteHelper
 import com.atividade.devmobile.randomdogs.databinding.ActivityFactListBinding
 import com.atividade.devmobile.randomdogs.databinding.ActivityMainBinding
+import com.atividade.devmobile.randomdogs.utils.AppToasts
 
 class FactListActivity : AppCompatActivity() {
 
@@ -45,6 +46,7 @@ class FactListActivity : AppCompatActivity() {
     private fun deleteFact(id: String) {
         sqlite.deleteFact(id)
         getFacts()
+        AppToasts.show(this, "Fato deletado!")
     }
 
     private fun initStorage() {

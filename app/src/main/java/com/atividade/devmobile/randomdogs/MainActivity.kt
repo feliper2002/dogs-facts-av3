@@ -19,6 +19,7 @@ import com.atividade.devmobile.randomdogs.repository.DogsClient
 import com.atividade.devmobile.randomdogs.repository.Endpoint
 import com.atividade.devmobile.randomdogs.utils.AppConsts
 import com.atividade.devmobile.randomdogs.utils.AppFunctions
+import com.atividade.devmobile.randomdogs.utils.AppToasts
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import retrofit2.Call
@@ -89,7 +90,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                println("Falhou")
+                AppToasts.show(MainActivity(), "Erro na requisição...")
             }
         })
     }
@@ -110,6 +111,9 @@ class MainActivity : AppCompatActivity() {
                         /// será adicionado como um `FactModel`
                         var fact = FactModel(AppFunctions.randomID(responseFact.message), responseFact.message)
                         sqlite.insertFact(fact)
+                        AppToasts.show(this, "Fato(s) adicionado(s) à lista!")
+                    } else {
+                        AppToasts.show(this, "Este(s) fato(s) já está(ão) adicionado(s) na lista!")
                     }
                 }
             }
