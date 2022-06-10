@@ -30,8 +30,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var centerText: TextView
-
     private lateinit var responseFactsRecyclerAdapter: ResponseFactsRecyclerAdapter
     private lateinit var recyclerView: RecyclerView
 
@@ -59,10 +57,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkFact(fact: ResponseFact) {
+        /// Marca o fato retornado pela CheckBox, atualizando o valor `checked` do model (true | false)
         responseFactsRecyclerAdapter.checkFact(fact)
     }
 
     private fun getRandom(number: String?) {
+        /// Faz a chamada da API, retornando fatos randômicos
+        ///
+        /// Recebe como parâmetro um [number: String?], que se conecta à uma @Query do `Retrofit`
+        /// para fazer a chamada da API por meio da query `?number=`
+
+
         val retrofitClient = DogsClient.get(AppConsts.baseURL)
         val endpoint = retrofitClient.create(Endpoint::class.java)
 
@@ -74,6 +79,7 @@ class MainActivity : AppCompatActivity() {
 
                 var factsArray = ArrayList<JsonElement>()
 
+                /// Passando os elementos do `JsonArray` para uma `ArrayList`
                 facts?.forEach { factsArray.add(it) }
 
                 println(factsArray)
@@ -89,15 +95,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveFact() {
-
+        /// Verifica qual dos fatos retornados está com a CheckBox `true`
+        /// Os fatos que estiverem com a CheckBox marcada, serão salvos no local storage do `SQLite`
         var facts = responseFactsRecyclerAdapter.getList()
 
         for (responseFact in facts) {
             if (responseFactsRecyclerAdapter.isFactChecked(responseFact)) {
-                if (responseFact.message.isNotEmpty() && (responseFact.message != AppConsts.msgPadrao)) {
+                if (responseFact.message.isNotEmpty()) {
                     var exists: Boolean = sqlite.existsAtStorage(responseFact.message)
+                    /// Verifica se o fato marcado já existe no local storage do SQLite
 
                     if (!exists) {
+                        /// Caso o fato nunca tenha sido salvo ou não esteja presente no local storage,
+                        /// será adicionado como um `FactModel`
                         var fact = FactModel(AppFunctions.randomID(responseFact.message), responseFact.message)
                         sqlite.insertFact(fact)
                     }

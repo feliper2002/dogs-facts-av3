@@ -61,6 +61,8 @@ class ResponseFactsRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     fun setOnClickCheckbox(callback: (ResponseFact)->Unit) {
+        /// Callback para ativar o `onClickCheckBox`, se baseando no `ResponseFact` posicionado
+        /// no índice do CheckBox clicado
         this.onClickCheckbox = callback
     }
 
