@@ -6,18 +6,20 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatDelegate
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.atividade.devmobile.randomdogs.adapters.FactsRecyclerAdapter
+import com.atividade.devmobile.randomdogs.adapters.ResponseFactsRecyclerAdapter
 import com.atividade.devmobile.randomdogs.data.SQLiteHelper
 import com.atividade.devmobile.randomdogs.databinding.ActivityMainBinding
 import com.atividade.devmobile.randomdogs.models.FactModel
+import com.atividade.devmobile.randomdogs.models.ResponseFact
 import com.atividade.devmobile.randomdogs.repository.DogsClient
 import com.atividade.devmobile.randomdogs.repository.Endpoint
 import com.atividade.devmobile.randomdogs.utils.AppConsts
 import com.atividade.devmobile.randomdogs.utils.AppFunctions
-import com.bumptech.glide.Glide
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Response
@@ -30,6 +32,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var centerText: TextView
 
+    private lateinit var responseFactsRecyclerAdapter: ResponseFactsRecyclerAdapter
+    private lateinit var recyclerView: RecyclerView
+
     private lateinit var botao: Button
     private lateinit var botaoSalvar: Button
 
@@ -38,33 +43,43 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-
         initView()
+        initRecyclerView()
         initStorage()
 
         botao.setOnClickListener {
-            getRandom()
+            getRandom("5")
         }
 
         botaoSalvar.setOnClickListener {
             saveFact()
         }
+
+        responseFactsRecyclerAdapter.setOnClickCheckbox { checkFact(it) }
     }
 
-    private fun getRandom() {
+    private fun checkFact(fact: ResponseFact) {
+        responseFactsRecyclerAdapter.checkFact(fact)
+    }
+
+    private fun getRandom(number: String?) {
         val retrofitClient = DogsClient.get(AppConsts.baseURL)
         val endpoint = retrofitClient.create(Endpoint::class.java)
 
-        endpoint.getRandomFact().enqueue(object : retrofit2.Callback<JsonObject> {
+        endpoint.getRandomFact(number).enqueue(object : retrofit2.Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 var body = response.body()
 
                 var facts = body?.get("facts")?.asJsonArray
 
-                var fact = facts?.get(0).toString()
+                var factsArray = ArrayList<JsonElement>()
 
-                centerText.text = fact
+                facts?.forEach { factsArray.add(it) }
+
+                println(factsArray)
+
+                responseFactsRecyclerAdapter.setDataset(facts = factsArray)
+
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
@@ -75,20 +90,32 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveFact() {
 
-        var message = centerText.text.toString()
+        var facts = responseFactsRecyclerAdapter.getList()
 
-        var exists: Boolean = sqlite.existsAtStorage(message)
+        for (responseFact in facts) {
+            if (responseFactsRecyclerAdapter.isFactChecked(responseFact)) {
+                if (responseFact.message.isNotEmpty() && (responseFact.message != AppConsts.msgPadrao)) {
+                    var exists: Boolean = sqlite.existsAtStorage(responseFact.message)
 
-        if (!exists) {
-            var fact = FactModel(AppFunctions.randomID(message), message)
-            sqlite.insertFact(fact)
+                    if (!exists) {
+                        var fact = FactModel(AppFunctions.randomID(responseFact.message), responseFact.message)
+                        sqlite.insertFact(fact)
+                    }
+                }
+            }
         }
     }
 
     private fun initView() {
         botao = binding.rdnBtn
-        centerText = binding.factText
         botaoSalvar = binding.saveBtn
+        recyclerView = binding.responseRecylerView
+    }
+
+    private fun initRecyclerView() {
+        responseFactsRecyclerAdapter = ResponseFactsRecyclerAdapter()
+        recyclerView.adapter = responseFactsRecyclerAdapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
     }
 
     private fun initStorage() {

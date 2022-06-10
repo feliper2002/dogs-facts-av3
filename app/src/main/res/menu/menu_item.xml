@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/factListMenu"
-        android:title="Lista de fatos"
+        android:title="Fatos salvos"
         app:showAsAction="ifRoom"
         />
 
