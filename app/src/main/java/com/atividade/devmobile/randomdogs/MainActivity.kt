@@ -6,10 +6,8 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Button
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.atividade.devmobile.randomdogs.adapters.FactsRecyclerAdapter
 import com.atividade.devmobile.randomdogs.adapters.ResponseFactsRecyclerAdapter
 import com.atividade.devmobile.randomdogs.data.SQLiteHelper
 import com.atividade.devmobile.randomdogs.databinding.ActivityMainBinding
@@ -45,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         initView()
         initRecyclerView()
         initStorage()
+        initBotaoSalvar()
 
         botao.setOnClickListener {
             getRandom("5")
@@ -54,7 +53,10 @@ class MainActivity : AppCompatActivity() {
             saveFact()
         }
 
-        responseFactsRecyclerAdapter.setOnClickCheckbox { checkFact(it) }
+        responseFactsRecyclerAdapter.setOnClickCheckbox {
+            checkFact(it)
+            initBotaoSalvar()
+        }
     }
 
     private fun checkFact(fact: ResponseFact) {
@@ -98,18 +100,24 @@ class MainActivity : AppCompatActivity() {
     private fun saveFact() {
         /// Verifica qual dos fatos retornados está com a CheckBox `true`
         /// Os fatos que estiverem com a CheckBox marcada, serão salvos no local storage do `SQLite`
-        var facts = responseFactsRecyclerAdapter.getList()
+        val facts = responseFactsRecyclerAdapter.getList()
+
+        val checkedFacts = facts.filter { it.checked }
+
+        if (checkedFacts.isEmpty()) {
+            AppToasts.show(this, "Nenhum fato está selecionado...")
+        }
 
         for (responseFact in facts) {
             if (responseFactsRecyclerAdapter.isFactChecked(responseFact)) {
                 if (responseFact.message.isNotEmpty()) {
-                    var exists: Boolean = sqlite.existsAtStorage(responseFact.message)
+                    val exists: Boolean = sqlite.existsAtStorage(responseFact.message)
                     /// Verifica se o fato marcado já existe no local storage do SQLite
 
                     if (!exists) {
                         /// Caso o fato nunca tenha sido salvo ou não esteja presente no local storage,
                         /// será adicionado como um `FactModel`
-                        var fact = FactModel(AppFunctions.randomID(responseFact.message), responseFact.message)
+                        val fact = FactModel(AppFunctions.randomID(responseFact.message), responseFact.message)
                         sqlite.insertFact(fact)
                         AppToasts.show(this, "Fato(s) adicionado(s) à lista!")
                     } else {
@@ -126,6 +134,18 @@ class MainActivity : AppCompatActivity() {
         recyclerView = binding.responseRecylerView
     }
 
+    private fun initBotaoSalvar() {
+        var list = responseFactsRecyclerAdapter.getList()
+
+        val checkedFacts = list.filter { it.checked }
+
+        if (list.isEmpty() || checkedFacts.isEmpty()) {
+            botaoSalvar.isEnabled = false
+        } else {
+            botaoSalvar.isEnabled = true
+        }
+    }
+
     private fun initRecyclerView() {
         responseFactsRecyclerAdapter = ResponseFactsRecyclerAdapter()
         recyclerView.adapter = responseFactsRecyclerAdapter
@@ -136,12 +156,18 @@ class MainActivity : AppCompatActivity() {
         sqlite = SQLiteHelper(context = this)
     }
 
-    private fun navToList() {
-        startActivity(Intent(this, FactListActivity::class.java))
+    private fun navController(route: String) {
+        val intent: Intent = when(route) {
+            "/facts" -> Intent(this, FactListActivity::class.java)
+            "/info" -> Intent(this, AppInfo::class.java)
+            else -> Intent(this, MainActivity::class.java)
+        }
+        startActivity(intent)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        var menuInflater = MenuInflater(this)
+        val menuInflater = MenuInflater(this)
         menuInflater.inflate(R.menu.menu_item, menu)
 
         return true
@@ -149,8 +175,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
+            R.id.appInfo -> {
+                navController("/info")
+            }
             R.id.factListMenu -> {
-                navToList()
+                navController("/facts")
             }
         }
 

@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Random Dogs</string>
+    <string name="app_name">Random Dog Facts</string>
+
+    <string name="save_facts">Fatos Salvos</string>
+    <string name="app_info">Sobre o App</string>
+    <string name="app_config">Configurações</string>
 </resources>
