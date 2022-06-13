@@ -13,12 +13,8 @@ import kotlinx.android.synthetic.main.fact_await.view.*
 
 class ResponseFactsRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var list = ArrayList<ResponseFact>()
+    var list = ArrayList<ResponseFact>()
     private var onClickCheckbox: ((ResponseFact)->Unit)? = null
-
-    fun getList() : ArrayList<ResponseFact> {
-        return list
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ResponseFactsViewHolder(
@@ -41,7 +37,7 @@ class ResponseFactsRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolde
 
     fun setDataset(facts: ArrayList<JsonElement>) {
 
-        var stringedFacts: ArrayList<ResponseFact> = ArrayList()
+        val stringedFacts: ArrayList<ResponseFact> = ArrayList()
 
         for (fact in facts) {
             val fact = ResponseFact(message = fact.toString(), checked = false)
@@ -54,10 +50,6 @@ class ResponseFactsRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolde
 
     fun checkFact(fact: ResponseFact) {
         fact.checked = !fact.checked
-    }
-
-    fun isFactChecked(fact: ResponseFact) : Boolean {
-        return fact.checked
     }
 
     fun setOnClickCheckbox(callback: (ResponseFact)->Unit) {

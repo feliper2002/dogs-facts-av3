@@ -76,16 +76,14 @@ class MainActivity : AppCompatActivity() {
 
         endpoint.getRandomFact(number).enqueue(object : retrofit2.Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                var body = response.body()
+                val body = response.body()
 
-                var facts = body?.get("facts")?.asJsonArray
+                val facts = body?.get("facts")?.asJsonArray
 
-                var factsArray = ArrayList<JsonElement>()
+                val factsArray = ArrayList<JsonElement>()
 
                 /// Passando os elementos do `JsonArray` para uma `ArrayList`
                 facts?.forEach { factsArray.add(it) }
-
-                println(factsArray)
 
                 responseFactsRecyclerAdapter.setDataset(facts = factsArray)
 
@@ -100,30 +98,24 @@ class MainActivity : AppCompatActivity() {
     private fun saveFact() {
         /// Verifica qual dos fatos retornados está com a CheckBox `true`
         /// Os fatos que estiverem com a CheckBox marcada, serão salvos no local storage do `SQLite`
-        val facts = responseFactsRecyclerAdapter.getList()
+        val facts = responseFactsRecyclerAdapter.list
 
-        val checkedFacts = facts.filter { it.checked }
+        val validFacts = facts.filter { it.checked && (it.message.isNotEmpty()) }
+        /// Filtra lista apenas com fatos válidos para serem salvos no SQLite
+        /// Fato válido: [ResponseFact.checked = true ; ResponseFact.message.isNotEmpty()]
 
-        if (checkedFacts.isEmpty()) {
-            AppToasts.show(this, "Nenhum fato está selecionado...")
-        }
+        for (fact in validFacts) {
+            val exists: Boolean = sqlite.existsAtStorage(fact.message)
+            /// Verifica se o fato marcado já existe no local storage do SQLite
 
-        for (responseFact in facts) {
-            if (responseFactsRecyclerAdapter.isFactChecked(responseFact)) {
-                if (responseFact.message.isNotEmpty()) {
-                    val exists: Boolean = sqlite.existsAtStorage(responseFact.message)
-                    /// Verifica se o fato marcado já existe no local storage do SQLite
-
-                    if (!exists) {
-                        /// Caso o fato nunca tenha sido salvo ou não esteja presente no local storage,
-                        /// será adicionado como um `FactModel`
-                        val fact = FactModel(AppFunctions.randomID(responseFact.message), responseFact.message)
-                        sqlite.insertFact(fact)
-                        AppToasts.show(this, "Fato(s) adicionado(s) à lista!")
-                    } else {
-                        AppToasts.show(this, "Este(s) fato(s) já está(ão) adicionado(s) na lista!")
-                    }
-                }
+            if (!exists) {
+                /// Caso o fato nunca tenha sido salvo ou não esteja presente no local storage,
+                /// será adicionado como um `FactModel`
+                val factModel = FactModel(AppFunctions.randomID(fact.message), fact.message)
+                sqlite.insertFact(factModel)
+                AppToasts.show(this, "Fato(s) adicionado(s) à lista!")
+            } else {
+                AppToasts.show(this, "Este(s) fato(s) já está(ão) adicionado(s) na lista!")
             }
         }
     }
@@ -135,7 +127,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initBotaoSalvar() {
-        var list = responseFactsRecyclerAdapter.getList()
+        val list = responseFactsRecyclerAdapter.list
 
         val checkedFacts = list.filter { it.checked }
 
@@ -157,6 +149,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navController(route: String) {
+        /// Método que utiliza o padrão [`Named Routes`] para facilitar a navegação entre telas
+
         val intent: Intent = when(route) {
             "/facts" -> Intent(this, FactListActivity::class.java)
             "/info" -> Intent(this, AppInfo::class.java)
