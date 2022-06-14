@@ -7,6 +7,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:backgroundTint="@color/white"
+        android:background="@color/white"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
         android:layout_marginHorizontal="10dp"
@@ -17,6 +19,7 @@
 
         <TextView
             android:id="@+id/factMessage"
+            android:textColor="@color/black"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textSize="20dp"
@@ -25,12 +28,14 @@
         <Button
             android:id="@+id/deleteBtn"
             android:layout_width="match_parent"
+            android:textColor="@color/white"
             android:layout_height="wrap_content"
             android:text="Deletar" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/grey1"
             android:text="_______________________________________________________"
             android:lines="1"
             android:maxLines="1"

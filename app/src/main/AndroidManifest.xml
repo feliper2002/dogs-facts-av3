@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RandomDogs">
-        <activity android:name=".AppInfo"></activity>
+        <activity android:name=".AppConfigs">
+        </activity>
+        <activity android:name=".AppInfo" />
         <activity android:name=".FactListActivity" />
         <activity
             android:name=".MainActivity"

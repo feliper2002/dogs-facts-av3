@@ -40,8 +40,8 @@ class ResponseFactsRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolde
         val stringedFacts: ArrayList<ResponseFact> = ArrayList()
 
         for (fact in facts) {
-            val fact = ResponseFact(message = fact.toString(), checked = false)
-            stringedFacts.add(fact)
+            val responseFact = ResponseFact(message = fact.toString(), checked = false)
+            stringedFacts.add(responseFact)
         }
 
         list = stringedFacts

@@ -17,6 +17,7 @@
     <TextView
         android:id="@+id/factFromResponse"
         android:layout_width="wrap_content"
+        android:textColor="@color/black"
         android:layout_height="match_parent"
         android:text="aaaaaaaaaaaaaaaaaaaaaaa"
         app:layout_constraintBottom_toBottomOf="parent"

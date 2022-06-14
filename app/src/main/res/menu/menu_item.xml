@@ -12,12 +12,6 @@
         tools:ignore="AlwaysShowAction"
         />
     <item
-        android:id="@+id/appConfig"
-        android:title="@string/app_config"
-        app:showAsAction="never"
-        android:tooltipText="@string/app_config"
-        />
-    <item
         android:id="@+id/appInfo"
         android:title="@string/app_info"
         app:showAsAction="never"

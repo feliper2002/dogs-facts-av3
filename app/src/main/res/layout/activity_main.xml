@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white"
+    android:backgroundTint="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -27,6 +28,7 @@
         android:layout_width="140dp"
         android:layout_height="50dp"
         android:text="Random!"
+        android:textColor="@color/white"
         android:textStyle="bold"
         android:textSize="16dp"
         android:layout_marginTop="152dp"
@@ -38,6 +40,7 @@
 
     <Button
         android:id="@+id/saveBtn"
+        android:textColor="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Salvar"
@@ -50,6 +53,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/responseRecylerView"
         android:layout_width="match_parent"
+        android:background="@color/white"
+        android:backgroundTint="@color/white"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginVertical="20dp"
