@@ -35,6 +35,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var botao: Button
     private lateinit var botaoSalvar: Button
 
+    private val factsNumber: String = "4"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -46,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         initBotaoSalvar()
 
         botao.setOnClickListener {
-            getRandom("5")
+            getRandom(factsNumber)
         }
 
         botaoSalvar.setOnClickListener {
@@ -74,11 +76,13 @@ class MainActivity : AppCompatActivity() {
         val retrofitClient = DogsClient.get(AppConsts.baseURL)
         val endpoint = retrofitClient.create(Endpoint::class.java)
 
+        val jsonObjectFactKey = "facts"
+
         endpoint.getRandomFact(number).enqueue(object : retrofit2.Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 val body = response.body()
 
-                val facts = body?.get("facts")?.asJsonArray
+                val facts = body?.get(jsonObjectFactKey)?.asJsonArray
 
                 val factsArray = ArrayList<JsonElement>()
 
@@ -103,6 +107,10 @@ class MainActivity : AppCompatActivity() {
         val validFacts = facts.filter { it.checked && (it.message.isNotEmpty()) }
         /// Filtra lista apenas com fatos válidos para serem salvos no SQLite
         /// Fato válido: [ResponseFact.checked = true ; ResponseFact.message.isNotEmpty()]
+
+        if (validFacts.isEmpty()) {
+            AppToasts.show(this, "Nenhum fato selecionado...")
+        }
 
         for (fact in validFacts) {
             val exists: Boolean = sqlite.existsAtStorage(fact.message)
@@ -131,10 +139,9 @@ class MainActivity : AppCompatActivity() {
 
         val checkedFacts = list.filter { it.checked }
 
-        if (list.isEmpty() || checkedFacts.isEmpty()) {
-            botaoSalvar.isEnabled = false
-        } else {
-            botaoSalvar.isEnabled = true
+        when(checkedFacts.isEmpty()) {
+            true -> botaoSalvar.isEnabled = false
+            false -> botaoSalvar.isEnabled = true
         }
     }
 
