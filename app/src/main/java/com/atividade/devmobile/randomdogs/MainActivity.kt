@@ -17,6 +17,7 @@ import com.atividade.devmobile.randomdogs.repository.DogsClient
 import com.atividade.devmobile.randomdogs.repository.Endpoint
 import com.atividade.devmobile.randomdogs.utils.AppConsts
 import com.atividade.devmobile.randomdogs.utils.AppFunctions
+import com.atividade.devmobile.randomdogs.utils.AppRoutes
 import com.atividade.devmobile.randomdogs.utils.AppToasts
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -159,8 +160,9 @@ class MainActivity : AppCompatActivity() {
         /// Método que utiliza o padrão [`Named Routes`] para facilitar a navegação entre telas
 
         val intent: Intent = when(route) {
-            "/facts" -> Intent(this, FactListActivity::class.java)
-            "/info" -> Intent(this, AppInfo::class.java)
+            AppRoutes.main -> Intent(this, MainActivity::class.java)
+            AppRoutes.facts -> Intent(this, FactListActivity::class.java)
+            AppRoutes.info -> Intent(this, AppInfo::class.java)
             else -> Intent(this, MainActivity::class.java)
         }
         startActivity(intent)
@@ -177,10 +179,10 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.appInfo -> {
-                navController("/info")
+                navController(AppRoutes.info)
             }
             R.id.factListMenu -> {
-                navController("/facts")
+                navController(AppRoutes.facts)
             }
         }
 

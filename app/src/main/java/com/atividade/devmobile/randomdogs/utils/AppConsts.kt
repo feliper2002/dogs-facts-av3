@@ -1,6 +1,6 @@
 package com.atividade.devmobile.randomdogs.utils
 
-class AppConsts {
+interface AppConsts {
     companion object {
         var baseURL = "https://dog-api.kinduff.com/"
     }
